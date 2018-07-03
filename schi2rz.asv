@@ -38,21 +38,20 @@ for i = 1:length(s(:))
             chi_path(j) = pi;
         else
             z_path(j) = fzero(@(z) psi_rz(r_path(j),z)-psi_i,[0,z_max*1.1]);
-            
+            % the derivatives of psi
+            dpsidr = psi_dr_rz(r_path(j),z_path(j));
+            dpsidz = psi_dz_rz(r_path(j),z_path(j));
+            % the norm of gradient of psi
+            dpsi_norm = sqrt(dpsidr.^2+dpsidz.^2);
+            % length of path element
+            %dl_path = sqrt(1+(dpsidr./dpsidz).^2).*(path_right-path_left)./(n_r-1);
+            dl_path = [sqrt(diff(r_path).^2+diff(z_path).^2),0];
+            % calculate q from loop integration
+            q(i_psi) = sum(1/(2*pi)*T_psi(psi_i)./(r_path.*dpsi_norm).*dl_path*2);
         end
-    end
-    % the derivatives of psi
-    dpsidr = psi_dr_rz(r_path,z_path);
-    dpsidz = psi_dz_rz(r_path,z_path);
-    % the norm of gradient of psi
-    psi_grad_path = sqrt(dpsidr.^2+dpsidz.^2);
-    % length of path element
-    %dl_path = sqrt(1+(dpsidr./dpsidz).^2).*(path_right-path_left)./(n_r-1);
-    dl_path = [sqrt(diff(r_path).^2+diff(z_path).^2),0];
-    % calculate integral kernel 
-    kernel_path = T_psi(psi_i)./(q_psi(psi_i).*r_path.*psi_grad_path).*dl_path;
-    for k = n_path
-        chi_path(k) = sum(kernel_path(1:k));
+        
+        
+        
     end
     
 end
