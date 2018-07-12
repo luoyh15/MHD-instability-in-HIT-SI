@@ -1,23 +1,20 @@
 function [r,z] = schi2rz(s, chi)
 global Psi_s R r_min r_max z_max psi_dr_rz psi_dz_rz
-if size(s) ~= size(chi)
-    msg = 'error: the size of s and chi must be equal';
-    error(msg);
-end
+
 % initialize the r z
-n_s = size(s,1);
-n_chi = size(s,2);
+n_s = length(s);
+n_chi = length(chi);
 r = zeros(n_s,n_chi);
 z = zeros(n_s,n_chi);
 %% integral through psi = const line to get chi at one point
 for i = 1:n_s
-    if(s(i,1) == 0)
+    if(s(i) == 0)
         r(i,:) = R;
         z(i,:) = 0;
         continue;
     end
     % psi
-    psi_i = s(i,1)^2*Psi_s;
+    psi_i = s(i)^2*Psi_s;
     % the start and end point of integral path
     path_left = fzero(@(r) psi_rz(r,0)-psi_i,[r_min*0.9,R]);
     path_right = fzero(@(r) psi_rz(r,0)-psi_i,[R,r_max*1.1]);
@@ -42,7 +39,7 @@ for i = 1:n_s
         chi_path(k) = sum(kernel_path(1:k));
     end
     chi_path(end) = pi;
-    r(i,:) = interp1(chi_path,r_path,chi(i,:));
+    r(i,:) = interp1(chi_path,r_path,chi);
     z(i,:) = interp1(r_path,z_path,r(i,:));
     
 end

@@ -12,7 +12,7 @@ psi_grad = psi_grad_norm(r,z);
 % initialize non-orthogonality
 beta_chi = zeros(size(s));
 
-for i = 1:size(s,1)
+for i = 1:n_s
     
     if(s(i,1)<0.1)
         psi = s(i,1)^2*Psi_s;

@@ -1,12 +1,12 @@
 %% set global variable
-global R E a b T0 Psi_s lamda n r_min r_max z_min z_max ...
+global R E a b T0 Psi_s lamda n gamma r_min r_max z_min z_max ...
     psi_dr_rz psi_dz_rz q0  psi_grad_norm ...
     psi_grad_square_dr_rz psi_grad_square_dz_rz
 
 %% the parameters determine the equilibrium
 R = 1; E = 2; a = 1/3; b = 0; T0 = 1;
 Psi_s = 1; %the psi value on the plasma surface
-lamda = 1; n = 2;
+lamda = 1; n = 2; gamma = 5/3;
 %% the boundary of plasma
 r_min = R*sqrt(1-2*a); r_max = R*sqrt(1+2*a);
 r_temp = R*(1-4*a^2)^(1/4);

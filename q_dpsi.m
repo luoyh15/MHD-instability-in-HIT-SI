@@ -11,3 +11,4 @@ dq_fit = [0,diff(q_fit)./diff(psi_fit)];
 dq_fit(1) = dq_fit(2);
 
 dqdpsi = interp1(psi_fit,dq_fit,psi);
+end
