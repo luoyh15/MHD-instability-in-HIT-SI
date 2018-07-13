@@ -154,37 +154,179 @@ B = XR'*(f./s.*XR) + XI'*(f./s.*XI) +...
 U = diag(ones(n_x,1));
 for i = 1:n_s+1
     % symmetry conditions of XR
-    U((2*n_chi+2)*(3*i-2)+1,(2*n_chi+2)*(3*i-2)+1) = 1; 
-    U((2*n_chi+2)*(3*i-2)+1,(2*n_chi+2)*(3*i-2)+3) = 1;
-    U((2*n_chi+2)*(3*i-2)+2*n_chi+1,(2*n_chi+2)*(3*i-2)+2*n_chi-1) = 1; 
-    U((2*n_chi+2)*(3*i-2)+2*n_chi+1,(2*n_chi+2)*(3*i-2)+2*n_chi+1) = 1;
+    U((2*n_chi+2)*(3*i-3)+1,(2*n_chi+2)*(3*i-3)+1) = 1; 
+    U((2*n_chi+2)*(3*i-3)+1,(2*n_chi+2)*(3*i-3)+3) = 1;
+    U((2*n_chi+2)*(3*i-3)+2*n_chi+1,(2*n_chi+2)*(3*i-3)+2*n_chi-1) = 1; 
+    U((2*n_chi+2)*(3*i-3)+2*n_chi+1,(2*n_chi+2)*(3*i-3)+2*n_chi+1) = 1;
     % symmetry conditions of XI
-    U((2*n_chi+2)*(3*i-2)+2,(2*n_chi+2)*(3*i-2)+2) = 1; 
-    U((2*n_chi+2)*(3*i-2)+2,(2*n_chi+2)*(3*i-2)+4) = -1;
-    U((2*n_chi+2)*(3*i-2)+2*n_chi+2,(2*n_chi+2)*(3*i-2)+2*n_chi) = 1; 
-    U((2*n_chi+2)*(3*i-2)+2*n_chi+2,(2*n_chi+2)*(3*i-2)+2*n_chi+2) = -1;
+    U((2*n_chi+2)*(3*i-3)+2,(2*n_chi+2)*(3*i-3)+2) = 1; 
+    U((2*n_chi+2)*(3*i-3)+2,(2*n_chi+2)*(3*i-3)+4) = -1;
+    U((2*n_chi+2)*(3*i-3)+2*n_chi+2,(2*n_chi+2)*(3*i-3)+2*n_chi) = 1; 
+    U((2*n_chi+2)*(3*i-3)+2*n_chi+2,(2*n_chi+2)*(3*i-3)+2*n_chi+2) = -1;
+end
+for i = 1:n_s
     % symmetry conditions of VR
+    U((2*n_chi+2)*(3*i-2)+1,(2*n_chi+2)*(3*i-2)+1) = 1; 
+    U((2*n_chi+2)*(3*i-2)+1,(2*n_chi+2)*(3*i-2)+3) = -1;
+    U((2*n_chi+2)*(3*i-2)+2*n_chi+1,(2*n_chi+2)*(3*i-2)+2*n_chi-1) = 1; 
+    U((2*n_chi+2)*(3*i-2)+2*n_chi+1,(2*n_chi+2)*(3*i-2)+2*n_chi+1) = -1;
+    % symmetry conditions of VI
+    U((2*n_chi+2)*(3*i-2)+2,(2*n_chi+2)*(3*i-2)+2) = 1; 
+    U((2*n_chi+2)*(3*i-2)+2,(2*n_chi+2)*(3*i-2)+4) = 1;
+    U((2*n_chi+2)*(3*i-2)+2*n_chi+2,(2*n_chi+2)*(3*i-2)+2*n_chi) = 1; 
+    U((2*n_chi+2)*(3*i-2)+2*n_chi+2,(2*n_chi+2)*(3*i-2)+2*n_chi+2) = 1;
+    % symmetry conditions of YR
     U((2*n_chi+2)*(3*i-1)+1,(2*n_chi+2)*(3*i-1)+1) = 1; 
     U((2*n_chi+2)*(3*i-1)+1,(2*n_chi+2)*(3*i-1)+3) = -1;
     U((2*n_chi+2)*(3*i-1)+2*n_chi+1,(2*n_chi+2)*(3*i-1)+2*n_chi-1) = 1; 
     U((2*n_chi+2)*(3*i-1)+2*n_chi+1,(2*n_chi+2)*(3*i-1)+2*n_chi+1) = -1;
-    % symmetry conditions of VI
+    % symmetry conditions of YI
     U((2*n_chi+2)*(3*i-1)+2,(2*n_chi+2)*(3*i-1)+2) = 1; 
     U((2*n_chi+2)*(3*i-1)+2,(2*n_chi+2)*(3*i-1)+4) = 1;
     U((2*n_chi+2)*(3*i-1)+2*n_chi+2,(2*n_chi+2)*(3*i-1)+2*n_chi) = 1; 
     U((2*n_chi+2)*(3*i-1)+2*n_chi+2,(2*n_chi+2)*(3*i-1)+2*n_chi+2) = 1;
-    % symmetry conditions of YR
-    U((2*n_chi+2)*(3*i)+1,(2*n_chi+2)*(3*i)+1) = 1; 
-    U((2*n_chi+2)*(3*i)+1,(2*n_chi+2)*(3*i)+3) = -1;
-    U((2*n_chi+2)*(3*i)+2*n_chi+1,(2*n_chi+2)*(3*i)+2*n_chi-1) = 1; 
-    U((2*n_chi+2)*(3*i)+2*n_chi+1,(2*n_chi+2)*(3*i)+2*n_chi+1) = -1;
+end
+% transformation using U
+Uinv = inv(U);
+At = Uinv'*A*Uinv;
+Bt = Uinv'*B*Uinv;
+% force the new tilda variables to zero
+w2inv = 1e-20; % which make the condition fullfilled when w2~=10^20
+for i = 1:n_s+1
+    %tilda A
+    % symmetry conditions of XR
+    At((2*n_chi+2)*(3*i-3)+1,:) = 0;
+    At(:,(2*n_chi+2)*(3*i-3)+1) = 0;
+    At((2*n_chi+2)*(3*i-3)+1,(2*n_chi+2)*(3*i-3)+1) = 1;
+    At((2*n_chi+2)*(3*i-3)+2*n_chi+1,:) = 0;
+    At(:,(2*n_chi+2)*(3*i-3)+2*n_chi+1) = 0;
+    At((2*n_chi+2)*(3*i-3)+2*n_chi+1,(2*n_chi+2)*(3*i-3)+2*n_chi+1) = 1;
     % symmetry conditions of XI
-    U((2*n_chi+2)*(3*i)+2,(2*n_chi+2)*(3*i)+2) = 1; 
-    U((2*n_chi+2)*(3*i)+2,(2*n_chi+2)*(3*i)+4) = 1;
-    U((2*n_chi+2)*(3*i)+2*n_chi+2,(2*n_chi+2)*(3*i)+2*n_chi) = 1; 
-    U((2*n_chi+2)*(3*i)+2*n_chi+2,(2*n_chi+2)*(3*i)+2*n_chi+2) = 1;
+    At((2*n_chi+2)*(3*i-3)+2,:) = 0;
+    At(:,(2*n_chi+2)*(3*i-3)+2) = 0;
+    At((2*n_chi+2)*(3*i-3)+2,(2*n_chi+2)*(3*i-3)+2) = 1;
+    At((2*n_chi+2)*(3*i-3)+2*n_chi+2,:) = 0;
+    At(:,(2*n_chi+2)*(3*i-3)+2*n_chi+2) = 0;
+    At((2*n_chi+2)*(3*i-3)+2*n_chi+2,(2*n_chi+2)*(3*i-3)+2*n_chi+2) = 1;
     
-        
-    
-    
+    % tilda B
+    % symmetry conditions of XR
+    Bt((2*n_chi+2)*(3*i-3)+1,:) = 0;
+    Bt(:,(2*n_chi+2)*(3*i-3)+1) = 0;
+    Bt((2*n_chi+2)*(3*i-3)+1,(2*n_chi+2)*(3*i-3)+1) = w2inv;
+    Bt((2*n_chi+2)*(3*i-3)+2*n_chi+1,:) = 0;
+    Bt(:,(2*n_chi+2)*(3*i-3)+2*n_chi+1) = 0;
+    Bt((2*n_chi+2)*(3*i-3)+2*n_chi+1,(2*n_chi+2)*(3*i-3)+2*n_chi+1) = w2inv;
+    % symmetry conditions of XI
+    Bt((2*n_chi+2)*(3*i-3)+2,:) = 0;
+    Bt(:,(2*n_chi+2)*(3*i-3)+2) = 0;
+    Bt((2*n_chi+2)*(3*i-3)+2,(2*n_chi+2)*(3*i-3)+2) = w2inv;
+    Bt((2*n_chi+2)*(3*i-3)+2*n_chi+2,:) = 0;
+    Bt(:,(2*n_chi+2)*(3*i-3)+2*n_chi+2) = 0;
+    Bt((2*n_chi+2)*(3*i-3)+2*n_chi+2,(2*n_chi+2)*(3*i-3)+2*n_chi+2) = w2inv;
+end
+for i = 1:n_s
+    % symmetry conditions of VR
+    At((2*n_chi+2)*(3*i-2)+1,:) = 0;
+    At(:,(2*n_chi+2)*(3*i-2)+1) = 0;
+    At((2*n_chi+2)*(3*i-2)+1,(2*n_chi+2)*(3*i-2)+1) = 1;
+    At((2*n_chi+2)*(3*i-2)+2*n_chi+1,:) = 0;
+    At(:,(2*n_chi+2)*(3*i-2)+2*n_chi+1) = 0;
+    At((2*n_chi+2)*(3*i-2)+2*n_chi+1,(2*n_chi+2)*(3*i-2)+2*n_chi+1) = 1;
+    % symmetry conditions of VI
+    At((2*n_chi+2)*(3*i-2)+2,:) = 0;
+    At(:,(2*n_chi+2)*(3*i-2)+2) = 0;
+    At((2*n_chi+2)*(3*i-2)+2,(2*n_chi+2)*(3*i-2)+2) = 1;
+    At((2*n_chi+2)*(3*i-2)+2*n_chi+2,:) = 0;
+    At(:,(2*n_chi+2)*(3*i-2)+2*n_chi+2) = 0;
+    At((2*n_chi+2)*(3*i-2)+2*n_chi+2,(2*n_chi+2)*(3*i-2)+2*n_chi+2) = 1;
+    % symmetry conditions of YR
+    At((2*n_chi+2)*(3*i-1)+1,:) = 0;
+    At(:,(2*n_chi+2)*(3*i-1)+1) = 0;
+    At((2*n_chi+2)*(3*i-2)+1,(2*n_chi+2)*(3*i-1)+1) = 1;
+    At((2*n_chi+2)*(3*i-1)+2*n_chi+1,:) = 0;
+    At(:,(2*n_chi+2)*(3*i-1)+2*n_chi+1) = 0;
+    At((2*n_chi+2)*(3*i-1)+2*n_chi+1,(2*n_chi+2)*(3*i-1)+2*n_chi+1) = 1;
+    % symmetry conditions of YI
+    At((2*n_chi+2)*(3*i-1)+2,:) = 0;
+    At(:,(2*n_chi+2)*(3*i-1)+2) = 0;
+    At((2*n_chi+2)*(3*i-1)+2,(2*n_chi+2)*(3*i-1)+2) = 1;
+    At((2*n_chi+2)*(3*i-1)+2*n_chi+2,:) = 0;
+    At(:,(2*n_chi+2)*(3*i-1)+2*n_chi+2) = 0;
+    At((2*n_chi+2)*(3*i-1)+2*n_chi+2,(2*n_chi+2)*(3*i-1)+2*n_chi+2) = 1;
+    % tilda B
+    % symmetry conditions of VR
+    Bt((2*n_chi+2)*(3*i-2)+1,:) = 0;
+    Bt(:,(2*n_chi+2)*(3*i-2)+1) = 0;
+    Bt((2*n_chi+2)*(3*i-2)+1,(2*n_chi+2)*(3*i-2)+1) = w2inv;
+    Bt((2*n_chi+2)*(3*i-2)+2*n_chi+1,:) = 0;
+    Bt(:,(2*n_chi+2)*(3*i-2)+2*n_chi+1) = 0;
+    Bt((2*n_chi+2)*(3*i-2)+2*n_chi+1,(2*n_chi+2)*(3*i-2)+2*n_chi+1) = w2inv;
+    % symmetry conditions of VI
+    Bt((2*n_chi+2)*(3*i-2)+2,:) = 0;
+    Bt(:,(2*n_chi+2)*(3*i-2)+2) = 0;
+    Bt((2*n_chi+2)*(3*i-2)+2,(2*n_chi+2)*(3*i-2)+2) = w2inv;
+    Bt((2*n_chi+2)*(3*i-2)+2*n_chi+2,:) = 0;
+    Bt(:,(2*n_chi+2)*(3*i-2)+2*n_chi+2) = 0;
+    Bt((2*n_chi+2)*(3*i-2)+2*n_chi+2,(2*n_chi+2)*(3*i-2)+2*n_chi+2) = w2inv;
+    % symmetry conditions of YR
+    Bt((2*n_chi+2)*(3*i-1)+1,:) = 0;
+    Bt(:,(2*n_chi+2)*(3*i-1)+1) = 0;
+    Bt((2*n_chi+2)*(3*i-2)+1,(2*n_chi+2)*(3*i-1)+1) = w2inv;
+    Bt((2*n_chi+2)*(3*i-1)+2*n_chi+1,:) = 0;
+    Bt(:,(2*n_chi+2)*(3*i-1)+2*n_chi+1) = 0;
+    Bt((2*n_chi+2)*(3*i-1)+2*n_chi+1,(2*n_chi+2)*(3*i-1)+2*n_chi+1) = w2inv;
+    % symmetry conditions of YI
+    Bt((2*n_chi+2)*(3*i-1)+2,:) = 0;
+    Bt(:,(2*n_chi+2)*(3*i-1)+2) = 0;
+    Bt((2*n_chi+2)*(3*i-1)+2,(2*n_chi+2)*(3*i-1)+2) = w2inv;
+    Bt((2*n_chi+2)*(3*i-1)+2*n_chi+2,:) = 0;
+    Bt(:,(2*n_chi+2)*(3*i-1)+2*n_chi+2) = 0;
+    Bt((2*n_chi+2)*(3*i-1)+2*n_chi+2,(2*n_chi+2)*(3*i-1)+2*n_chi+2) = w2inv;
+end
+%% regularity conditions at s = 0
+% the procejure is same as symmetry conditions
+for j = 1:n_chi+1
+    % tilda A
+    % XR
+    At(2*(j-1)+1,:) = 0;
+    At(:,2*(j-1)+1) = 0;
+    At(2*(j-1)+1,2*(j-1)+1) = 1;
+    % XI
+    At(2*(j-1)+2,:) = 0;
+    At(:,2*(j-1)+2) = 0;
+    At(2*(j-1)+2,2*(j-1)+2) = 1;
+    % tilda B
+    % XR
+    Bt(2*(j-1)+1,:) = 0;
+    Bt(:,2*(j-1)+1) = 0;
+    Bt(2*(j-1)+1,2*(j-1)+1) = w2inv;
+    % XI
+    Bt(2*(j-1)+2,:) = 0;
+    Bt(:,2*(j-1)+2) = 0;
+    Bt(2*(j-1)+2,2*(j-1)+2) = w2inv;
+end
+%% boundary conditions at plasma surface s = 1
+% a wall straight on the plasma surface
+%the procejure is same as symmetry conditions
+for j = 1:n_chi+1
+    % tilda A
+    % XR
+    At(3*n_s*(2*n_chi+2)+2*(j-1)+1,:) = 0;
+    At(:,3*n_s*(2*n_chi+2)+2*(j-1)+1) = 0;
+    At(3*n_s*(2*n_chi+2)+2*(j-1)+1,3*n_s*(2*n_chi+2)+2*(j-1)+1) = w2inv;
+    % XI
+    At(3*n_s*(2*n_chi+2)+2*(j-1)+2,:) = 0;
+    At(:,3*n_s*(2*n_chi+2)+2*(j-1)+2) = 0;
+    At(3*n_s*(2*n_chi+2)+2*(j-1)+2,3*n_s*(2*n_chi+2)+2*(j-1)+2) = w2inv;
+    % tilda B
+    % XR
+    Bt(3*n_s*(2*n_chi+2)+2*(j-1)+1,:) = 0;
+    Bt(:,3*n_s*(2*n_chi+2)+2*(j-1)+1) = 0;
+    Bt(3*n_s*(2*n_chi+2)+2*(j-1)+1,3*n_s*(2*n_chi+2)+2*(j-1)+1) = w2inv;
+    % XI
+    Bt(3*n_s*(2*n_chi+2)+2*(j-1)+2,:) = 0;
+    Bt(:,3*n_s*(2*n_chi+2)+2*(j-1)+2) = 0;
+    Bt(3*n_s*(2*n_chi+2)+2*(j-1)+2,3*n_s*(2*n_chi+2)+2*(j-1)+2) = w2inv;
+end
 
