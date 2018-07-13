@@ -1,4 +1,4 @@
-function A = matrix_A(n_s,n_chi)
+function w2 = growthrate(n_s,n_chi)
 %% s and chi 
 s = 0:1/n_s:1;
 chi = -pi/(2*(n_chi-1)):pi/(n_chi-1):pi+pi/(2*(n_chi-1));
@@ -105,13 +105,13 @@ K = 2*psi/q0.*(jphi.^2./psi_grad.^2+jphi./r.*logpsigrad_dpsi(r,z)...
     -p_dpsi(psi).*logr_dpsi(r,z));
 
 % reshape every quantity to one column
-s = reshape(repmat(s,1,5)',[],1);
+s = reshape(repmat(s,1,n_chi)',[],1);
 r = reshape(r',[],1);
-psi = reshape(repmat(psi,1,5)',[],1);
+psi = reshape(repmat(psi,1,n_chi)',[],1);
 psi_grad = reshape(psi_grad,[],1);
-p = reshape(repmat(p,1,5)',[],1);
-T = reshape(repmat(T,1,5)',[],1);
-q = reshape(repmat(q,1,5)',[],1);
+p = reshape(repmat(p,1,n_chi)',[],1);
+T = reshape(repmat(T,1,n_chi)',[],1);
+q = reshape(repmat(q,1,n_chi)',[],1);
 beta_chi = reshape(beta_chi',[],1);
 dlogr2ds = reshape(dlogr2ds',[],1);
 dlogr2dchi = reshape(dlogr2dchi',[],1);
@@ -329,4 +329,4 @@ for j = 1:n_chi+1
     Bt(:,3*n_s*(2*n_chi+2)+2*(j-1)+2) = 0;
     Bt(3*n_s*(2*n_chi+2)+2*(j-1)+2,3*n_s*(2*n_chi+2)+2*(j-1)+2) = w2inv;
 end
-
+w2 = eig(Bt\At);
