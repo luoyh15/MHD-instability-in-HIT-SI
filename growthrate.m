@@ -4,7 +4,7 @@ s = 0:1/n_s:1;
 chi = -pi/(2*(n_chi-1)):pi/(n_chi-1):pi+pi/(2*(n_chi-1));
 %% initialize matrix A
 n_x = (3*n_s+1)*(2*n_chi+2);% the totle number of unknow variables
-A = zeros(n_x,n_x);
+%A = zeros(n_x,n_x);
 %% matrix form of the seven dependent components
 %initialize
 XR = zeros(n_s*n_chi,n_x);
