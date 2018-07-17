@@ -50,7 +50,7 @@ M_jphi = r.*interp1(psi,V_pDpsi,M_psi)+...
 %% safety factor
 % integrate over the constant psi path
 V_q = zeros(size(psi));
-for i_psi = 2:length(psi(:))% exclude the magnetic axis situation
+for i_psi = 2:length(psi)% exclude the magnetic axis situation
     psi_i = psi(i_psi);
     
     % the start and end point of the loop integration
@@ -95,7 +95,7 @@ chi = linspace(0,pi,n_chi);
 M_r = zeros(size(s));
 M_z = zeros(size(s));
 % integral through psi = const line to get chi at one point
-for i = 1:n_s % the ith column of matrix s is the constant s
+for i = 1:n_s % the ith column of matrix s is constant 
     if(s(:,i) == 0)
         M_r(:,i) = R;
         M_z(:,i) = 0;
@@ -139,13 +139,13 @@ for i = 1:n_s % the ith column of matrix s is the constant s
         chi_path(k) = sum(kernel_path(1:k));
     end
     chi_path(end) = pi;
-    M_r(:,i) = interp1(chi_path,r_path,chi);
-    M_z(:,i) = interp1(r_path,z_path,r(i,:));  
+    M_r(:,i) = interp1(chi_path,r_path,chi(:,i));
+    M_z(:,i) = interp1(chi_path,z_path,chi(:,i));  
 end
 
 %% non-orthgonolity
 % initialize
-M_beta_chi = zeros(size(s));
+M_betachi = zeros(size(s));
 for i = 1:n_s
     % psi
     psi_i = s(1,i)^2*Psi_s;
@@ -173,14 +173,14 @@ for i = 1:n_s
     % length of path element
     dchi_path = pi/(n_path-1);
     % the kernel of integral over consant psi path
-    kernal_path = (j_phi_path./psi_grad_norm_path+...
+    kernal = (j_phi_path./psi_grad_norm_path+...
         1./T_path.*T_dpsi_path-...
         psi_grad2_dpsi_path./psi_grad_norm_path.^2-...
         1./q_path.*q_dpsi_path).*dchi_path;
     % integral over the path to get non-orthogonality
     beta_path = zeros(size(chi_path));
     for j =1:length(chi_path)
-        beta_path(j) = sum(kernal_path(1:j));
+        beta_path(j) = sum(kernal(1:j));
     end
-    M_beta_chi(:,i) = interp1(chi_path,beta_path,chi(:,i));
+    M_betachi(:,i) = interp1(chi_path,beta_path,chi(:,i));
 end
